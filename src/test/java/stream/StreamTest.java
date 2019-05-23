@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -99,7 +100,6 @@ public class StreamTest {
     public void testMap(){
 //        int i = list.stream().mapToInt(e->e.getAge()).sum();
 //        System.out.println("Total age is "+i);
-
         Stream s = list.stream().sorted((e,f) -> {
             return f.getAge() -e.getAge();
         });
