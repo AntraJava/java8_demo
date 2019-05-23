@@ -19,7 +19,7 @@ public class Demo {
 
     @Test
     public void doTestNull() {
-        String name = dept.flatMap(Department::getProduct).map(Product::getName).get();
+        String name = dept.flatMap(Department::getProduct).map(Product::getName).orElse("123");
 
         System.out.println(name);
     }

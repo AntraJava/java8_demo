@@ -4,6 +4,7 @@ import functional.Employee;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -11,7 +12,7 @@ import java.util.stream.Stream;
 public class StreamTest {
 
     List<Employee> list = new ArrayList<>();
-
+    Map<Employee, String> map = new TreeMap<>();
     @Before
     public void init() {
         Employee emp1 = new Employee(20, "Name1", 800);
@@ -30,15 +31,36 @@ public class StreamTest {
 
     @Test
     public void testMinMax(){
-        Employee yongestEMP = list.stream().min(Comparator.comparing(Employee::getAge)
-                .thenComparing(Employee::getName)).get();
-//        Employee yongestEMP = list.stream().min((i,j)->i.getAge()-j.getAge()).get();
-//        Employee yongestEMP1 = list.stream().min(new Comparator<Employee>() {
-//            @Override
-//            public int compare(Employee o1, Employee o2) {
-//                return o1.getAge()-o2.getAge();
-//            }
-//        }).get();
+        Employee yongestEMP = list.stream().min(Comparator.comparing(Employee::getAge).reversed()
+                .thenComparing(Employee::getName)).orElseGet(Employee::new);
+
+
+        Employee yongestEMP2 = list.stream().min((i,j)->{
+            int res = i.getAge()-j.getAge();
+            if(res == 0){
+                res = i.getName().compareTo(j.getName());
+                if(res ==0){
+
+                }
+            }
+            return res;
+        }).get();
+
+
+        Employee yongestEMP1 = list.stream().min(new Comparator<Employee>() {
+
+            @Override
+            public int compare(Employee o1, Employee o2) {
+                int res = o1.getAge()-o2.getAge();
+                if(res == 0){
+                    res = o1.getName().compareTo(o2.getName());
+                    if(res ==0){
+
+                    }
+                }
+                return res;
+            }
+        }).get();
         System.out.println("Yongest Employee is "+yongestEMP);
 
         Employee empWithMaxSalary = list.stream().max(Comparator.comparing(Employee::getSalary)).get();
@@ -50,15 +72,27 @@ public class StreamTest {
     public void testSorting(){
 //        list.stream().sorted().forEach(System.out::println);
         System.out.println("/////////////////////////////////////////////////////");
+
         list.stream().sorted((o1, o2) -> o2.getAge() - o1.getAge())
-                .forEach((i)->System.out.println(i));
-        System.out.println("/////////////////////////////////////////////////////");
-        list.stream().sorted(Comparator.comparing(Employee::getSalary).reversed().thenComparing(Employee::getAge)).forEach(System.out::println);
+            .forEach((i)->{System.out.println(i.getAge());});
+
+        List<Employee> newList = list.stream().sorted().collect(Collectors.toList());
+
+//        System.out.println("/////////////////////////////////////////////////////");
+        list.forEach((i)->System.out.println(i));
+        list.sort((o1, o2) -> o2.getAge() - o1.getAge());
+//
+//        System.out.println("/////////////////////////////////////////////////////");
+        list.stream().sorted(
+                Comparator.comparing(Employee::getSalary)
+                        .reversed().thenComparing(Employee::getAge))
+                .forEach(System.out::println);
     }
 
     @Test
     public void testFilter(){
-        list.stream().filter(i->i.getAge()>30).forEach(i->System.out.println(i));
+       list.stream().filter(i->i.getAge()>30)
+                .filter(i->i.getAge()< 100).forEach(i->System.out.println(i + "."));
     }
 
     @Test
@@ -69,14 +103,23 @@ public class StreamTest {
         Stream s = list.stream().sorted((e,f) -> {
             return f.getAge() -e.getAge();
         });
+
         s.forEach(System.out::println);
 
         System.out.println("///////////////////////");
 
-        list.stream().forEach(System.out::println);
+
+        list.stream().forEach(i->{
+            System.out.println(i);
+        });
 
 
-//        String name = list.stream().map(e -> e.getName() + " " + e.getAge()).collect(Collectors.joining(", "));
+        List<String> name = list.stream()
+                .map(e -> e.getName() + " " + e.getAge()).collect(Collectors.toList());
+
+
+
+        System.out.println(name.stream().collect(Collectors.joining(" * ")));
 //        System.out.println(name);
     }
 
@@ -86,7 +129,10 @@ public class StreamTest {
         Map<Boolean, List<Employee>> aMap = list.stream().collect(Collectors.partitioningBy(o -> o.getSalary()>1000));
         aMap.forEach((k,v) ->System.out.println(k + " " + v));
 
-        Map<String, List<Employee>> bMap = list.stream().collect(Collectors.groupingBy(o -> o.getSalary()>=1000?"Greater than/equal to 1000":"Less than 1000"));
+        Map<String, List<Employee>> bMap = list.stream()
+                .collect(Collectors.groupingBy(o -> o.getSalary()>=1000?"Greater than/equal to 1000":"Less than 1000"));
+
+
         bMap.forEach((k,v) ->System.out.println(k + " " + v));
 
         Map<String, List<Employee>> cMap = list.stream().collect(Collectors.groupingBy(o->{
@@ -114,7 +160,11 @@ public class StreamTest {
 
     @Test
     public void testChange(){
-        list.stream().peek(e->e.setName("sdf")).forEach(e->e.setAge(e.getAge()+1));
+        list.stream().filter(e->{
+            return e.getAge()>100;
+        }).peek(e->{
+            e.setName("sdf");
+            }).forEach(e->e.setAge(e.getAge()+1));
         list.forEach(System.out::println);
     }
 

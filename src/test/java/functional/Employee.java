@@ -4,7 +4,7 @@ public class Employee {
     private int age;
     private String name;
     private double salary;
-
+    public Employee(){}
     public Employee(int age, String name, double salary) {
         this.age = age;
         this.name = name;

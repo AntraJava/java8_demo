@@ -11,17 +11,19 @@ public class FunctionalLambdaTest {
     @Test
     public void testDosomething() {
         DoSomethingInterface do1 = (i) -> "this is the input : " + i;
+
         DoSomethingInterface do11 = (i) -> {
             System.out.println();
             return "this is the input : " + i;
         };
+
         DoSomethingInterface do2 = new DoSomethingInterface() {
-              @Override
+            @Override
             public String doSomething(String param) {
                 return "this is the input: " + param;
             }
         };
-        letsCall(do2);
+        letsCall(do1);
     }
 
     static void letsCall(DoSomethingInterface doIt){

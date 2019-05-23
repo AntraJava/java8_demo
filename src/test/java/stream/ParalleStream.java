@@ -68,10 +68,10 @@ public class ParalleStream {
     public void testReduce(){
         long start = System.nanoTime();
         Employee emp = bigList.parallelStream().reduce((employee, employee2)->{
-            employee.setSalary(employee2.getSalary()+employee.getSalary());
-            employee.setAge(employee2.getAge()+employee.getAge());
-            employee.setName(employee.getName()+", "+employee2.getName());
-            return employee;
+                employee.setSalary(employee2.getSalary()+employee.getSalary());
+                employee.setAge(employee2.getAge()+employee.getAge());
+                employee.setName(employee.getName()+", "+employee2.getName());
+                return employee;
         }).get();
         System.out.println(emp);
         long duration = (System.nanoTime() - start) / 1_000_000;
